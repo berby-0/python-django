@@ -1,0 +1,251 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    职位对比
+{% endblock %}
+
+{% block link %}
+    <link rel="stylesheet" href="/static/layui/css/layui.css">
+
+{% endblock %}
+
+{% block d_title %}
+    职位对比
+{% endblock %}
+
+{% block body %}
+
+    <div class="layui-form">
+        <div class="layui-inline">
+            <select name="job1" id="cojob01" class="layui-col-md4">
+                <option value="">请选择1</option>
+                  {% for i in list.keyword %}
+                    <option value="{{ i.0 }}" >{{ i.0 }}</option>
+                  {% endfor %}
+            </select>
+        </div>
+        <div class="layui-inline">
+            <select name="job2"  id="cojob02"  class="layui-col-md4">
+                <option value="">请选择2</option>
+                  {% for i in list.keyword %}
+                      <option value="{{ i.0 }}">{{ i.0 }}</option>
+                  {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="layui-btn " lay-submit="" lay-filter="demo1" onclick="con_job()">对比</button>
+
+    </div>
+
+    <div class="boxall" style="height:400px; width: 100%;">
+        <div class="layui-col-xs9 layui-col-sm9 layui-col-md6" style="height:100%;">
+            <div style="height:96%; width: 96%; margin:2%;background:#F5F5F5" id="fb5"></div>
+        </div>
+        <div class="layui-col-xs9 layui-col-sm9 layui-col-md6" style="height:100%;">
+            <div style="height:96%; width: 96%; margin:2%;background:#F5F5F5" id="fb6"></div>
+        </div>
+    </div>
+    <div class="boxall" style="height:400px; width: 100%;">
+        <div class="layui-col-xs9 layui-col-sm9 layui-col-md6" style="height:100%;">
+            <div style="height:96%; width: 96%; margin:2%;background:#F5F5F5" id="fb1"></div>
+        </div>
+        <div class="layui-col-xs9 layui-col-sm9 layui-col-md6" style="height:100%;">
+            <div style="height:96%; width: 96%; margin:2%;background:#F5F5F5" id="fb2"></div>
+        </div>
+    </div>
+
+    <div class="boxall" style="height:400px; width: 100%;">
+        <div class="layui-col-xs9 layui-col-sm9 layui-col-md6" style="height:100%;">
+            <div style="height:96%; width: 96%; margin:2%;background:#F5F5F5" id="fb3"></div>
+        </div>
+        <div class="layui-col-xs9 layui-col-sm9 layui-col-md6" style="height:100%;">
+            <div style="height:96%; width: 96%; margin:2%;background:#F5F5F5" id="fb4"></div>
+        </div>
+    </div>
+
+        <div class="boxall" style="margin-top:5px; ">
+          <button class="layui-btn" style="height:100%; margin:1%;" id="joblist" onclick="job_list()">显示职位列表</button>
+          <button class="layui-btn" style="height:100%; margin:1%;" id="cloudimg" onclick="cloud_img()">显示福利词云</button>
+    </div>
+
+
+    <!-- 词云图-->
+    <div id="imgs" style="width:100%;height:400px;display: none" >
+        <div class="layui-col-xs9 layui-col-sm9 layui-col-md6" style="height:100%;">
+            <div style="text-align:center;" id="job11">job1</div>
+            <img style="height:90%; width: 96%; margin:2%;background:#F5F5F5"
+                 src="/static/img/job_key.jpg" alt="加载失败"/>
+        </div>
+        <div class="layui-col-xs9 layui-col-sm9 layui-col-md6" style="height:100%;">
+            <div style="text-align:center;" id="job12">job1</div>
+            <img style="height:90%; width: 96%; margin:2%;background:#F5F5F5"
+                 src="/static/img/t2.jpg" alt="加载失败"/>
+        </div>
+    </div>
+
+    <div id="table_job" style="width:100%;display: none">
+        <div class="layui-col-xs9 layui-col-sm9 layui-col-md6">
+            <div style="text-align:center;" id="job21">job1</div>
+            <div style="margin:1%;" >
+                <table class="layui-hide" id="data_list1"></table>
+            </div>
+        </div>
+        <div class="layui-col-xs9 layui-col-sm9 layui-col-md6" >
+            <div style="text-align:center;" id="job22">job2</div>
+            <div  style="margin:1%;">
+                <table class="layui-hide " id="data_list2"></table>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}
+
+{% block script %}
+
+    <script src="/static/layui/layui.js"></script>
+    <script src="/static/layui/layui.all.js"></script>
+    <script src="/static/echarts/echarts.min.js"></script>
+    <script src="/static/js/con_fb.js"></script>
+
+    <script>
+        layui.use('table', function(){
+          var table = layui.table;
+          var data1 = {{ list|safe }}
+          table.render({
+            elem: '#data_list1'
+            ,cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+            ,cols: [[
+                    {field: 'job_href', width: 80, title: '链接', sort: true}
+                    , {field: 'company_name', title: '公司名称', sort: true}
+                    , {field: 'job_name', title: '职位名称', sort: true}
+                    , {field: 'companytype_text', title: '公司类型', sort: true}
+                    , {field: 'jobwelf_list', title: '福利标签', sort: true}
+                    , {field: 'degreefrom', title: '学历要求', sort: true}
+
+                    , {field: 'workyear', title: '工作年限', sort: true}
+                    , {field: 'companyind_text', title: '行业', sort: true}
+                    , {field: 'providesalary_text', title: '薪资待遇', sort: true}]],
+                data: data1['job01']['data1']
+                , page: true
+          });
+            table.render({
+            elem: '#data_list2'
+            ,url:'/contrast/'
+            ,cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+            ,cols: [[
+                    {field: 'job_href', width: 80, title: '链接', sort: true}
+                    , {field: 'company_name', title: '公司名称', sort: true}
+                    , {field: 'job_name', title: '职位名称', sort: true}
+                    , {field: 'companytype_text', title: '公司类型', sort: true}
+                    , {field: 'jobwelf_list', title: '福利标签', sort: true}
+                    , {field: 'degreefrom', title: '学历要求', sort: true}
+
+                    , {field: 'workyear', title: '工作年限', sort: true}
+                    , {field: 'companyind_text', title: '行业', sort: true}
+                    , {field: 'providesalary_text', title: '薪资待遇', sort: true}]],
+                data: data1['job02']['data1']
+                , page: true
+          });
+        });
+    </script>
+
+    <script type="text/javascript">
+        function con_job(){
+            $.ajax({
+                async:false,
+                type:"POST",  //提交方式
+                url:"/contrast/?key={{ list.key_type }}", //请求url
+                data: {
+                    cojob1 : $('#cojob01').val(),
+                    cojob2 : $('#cojob02').val()
+                },
+                dataType:"json", //数据类型
+                success:function(arg){
+                    console.log('success');
+                    console.log(arg)
+                    fb1(arg);
+                    fb2(arg);
+                    fb3(arg);
+                    fb4(arg);
+                    fb5(arg);
+                    fb6(arg);
+        layui.use('table', function(){
+          var table = layui.table;
+          var data1 = arg
+          table.render({
+            elem: '#data_list1'
+            ,cellMinWidth: 150 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+            ,cols: [[
+                    {field: 'job_href', width: 80, title: '链接', sort: true}
+                    , {field: 'company_name', title: '公司名称', sort: true}
+                    , {field: 'job_name', title: '职位名称', sort: true}
+                    , {field: 'companytype_text', title: '公司类型', sort: true}
+                    , {field: 'jobwelf_list', title: '福利标签', sort: true}
+                    , {field: 'degreefrom', title: '学历要求', sort: true}
+
+                    , {field: 'workyear', title: '工作年限', sort: true}
+                    , {field: 'companyind_text', title: '行业', sort: true}
+                    , {field: 'providesalary_text', title: '薪资待遇', sort: true}]],
+                data: data1['job01']['data1']
+                , page: true
+          });
+            table.render({
+            elem: '#data_list2'
+            ,cellMinWidth: 150 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+            ,cols: [[
+                    {field: 'job_href', width: 80, title: '链接', sort: true}
+                    , {field: 'company_name', title: '公司名称', sort: true}
+                    , {field: 'job_name', title: '职位名称', sort: true}
+                    , {field: 'companytype_text', title: '公司类型', sort: true}
+                    , {field: 'jobwelf_list', title: '福利标签', sort: true}
+                    , {field: 'degreefrom', title: '学历要求', sort: true}
+
+                    , {field: 'workyear', title: '工作年限', sort: true}
+                    , {field: 'companyind_text', title: '行业', sort: true}
+                    , {field: 'providesalary_text', title: '薪资待遇', sort: true}]],
+                data: data1['job02']['data1']
+                , page: true
+          });
+        });
+                    job11.innerHTML = arg['job01']['job_name'];
+                    job12.innerHTML = arg['job02']['job_name'];
+                    job21.innerHTML = arg['job01']['job_name'];
+                    job22.innerHTML = arg['job02']['job_name'];
+                },
+                error: function(e) {
+                    console.log("error")
+                    console.log(e)
+                },
+            });
+
+        };
+    </script>
+    <script>
+    function job_list(){
+        if (table_job.style.display == "block") {
+            table_job.style.display = 'none';
+            joblist.innerHTML = '显示职位列表';
+
+        } else {
+            table_job.style.display = 'block';
+            joblist.innerHTML = '收起职位列表';
+        }
+
+    };
+    function cloud_img(){
+        if (imgs.style.display == "block") {
+            imgs.style.display = 'none';
+            cloudimg.innerHTML = '显示词云';
+
+        } else {
+            imgs.style.display = 'block';
+            cloudimg.innerHTML = '收起词云';
+        }
+
+    };
+
+    </script>
+
+
+
+{% endblock %}

@@ -1,0 +1,694 @@
+{% extends 'layout.html' %}
+
+{% block title %}
+    首页
+{% endblock %}
+
+{% block link %}
+    <link rel="stylesheet" href="/static/layui/css/layui.css">
+{% endblock %}
+
+{% block d_title %}
+    首页
+{% endblock %}
+
+{% block body %}
+
+    <div class="boxall" style="height:400px; width: 100%;">
+            <div class="layui-col-xs6 layui-col-sm6 layui-col-md4" style="height:100%;">
+                <div style="height:96%; width: 96%; margin:2%;background:#F5F5F5" id="fb1"></div>
+            </div>
+            <div class="layui-col-xs6 layui-col-sm6 layui-col-md4" style="height:100%;">
+                <div style="height:96%; width: 96%; margin:2%;background:#F5F5F5" id="fb2"></div>
+            </div>
+            <div class="layui-col-xs6 layui-col-sm6 layui-col-md4" style="height:100%;">
+                <div style="height:96%; width: 96%; margin:2%;background:#F5F5F5" id="fb3"></div>
+            </div>
+    </div>
+
+<!--
+    <div class="boxall" style="height:400px; width: 100%;">
+            <div class="layui-col-xs6 layui-col-sm6 layui-col-md4" style="height:100%;">
+                <div style="height:96%; width: 96%; margin:2%;background:#F5F5F5" id="fb4"></div>
+            </div>
+            <div class="layui-col-xs6 layui-col-sm6 layui-col-md4" style="height:100%;">
+                <div style="height:96%; width: 96%; margin:2%;background:#F5F5F5" id="fb5"></div>
+            </div>
+            <div class="layui-col-xs6 layui-col-sm6 layui-col-md4" style="height:100%;">
+                <div style="height:96%; width: 96%; margin:2%;background:#F5F5F5" id="fb6"></div>
+            </div>
+    </div>
+    -->
+    <div class="boxall" style="height:400px; width: 100%;">
+    {% for i in list.data1 %}
+        <p> {{ i.0 }} </p>
+    {% endfor %}
+    </div>
+    <table class="layui-hide" id="data_list">
+           <!-- <td id="fbt1"></td>
+            <td id="fbt2"></td>
+            -->
+    </table>
+
+{% endblock %}
+
+{% block script %}
+    <script src="/static/layui/layui.js"></script>
+    <script src="/static/echarts/echarts.min.js"></script>
+    <script>
+        layui.use('table', function(){
+          var table = layui.table;
+          table.render({
+            elem: '#data_list'
+            ,url:'/set_scrapy/'
+            ,cellMinWidth: 80 //全局定义常规单元格的最小宽度，layui 2.2.1 新增
+            ,cols: [[
+              {field:{{ list.data1 }}, width:80, title: 'type', sort: true}
+              ,{field:{{ list.data1 }}, title: 'job1'}
+              ,{field:{{ list.data1 }}, title: 'job2'}
+            ]]
+          });
+        });
+    </script>
+
+    <script>
+    function fb1(){
+        var myChart = echarts.init(document.getElementById('fb1'));
+        var data = {{ list|safe }}
+        option = {
+            title: [{
+                        text: '公司规模',
+                        top:'5%',
+                        left: 'center',
+                        textStyle: {
+                            //color: '#balck',
+                            fontSize: '16'
+                        }
+
+                    }],
+             tooltip: {
+                        trigger: 'item',
+                        formatter: "{a} <br/>{b}: {c} ({d}%)",
+                        position: function (p) {   //其中p为当前鼠标的位置
+                            return [p[0] + 10, p[1] - 10];
+                        }
+                    },
+            //图片保存
+            toolbox: {
+                feature: {
+                    saveAsImage: {}
+                }
+            },
+            legend: {
+                        top: '85%',
+                        itemWidth: 15,
+                        itemHeight: 15,
+                        // data:['2D线','3D线','资源类','采集类','宝宝大全','2D视频','3D视频'],
+                        data: data['companysize_text']['x_name'],
+                        textStyle: {
+                            fontSize: '15'
+                        }
+                    },
+            series: [
+                {
+                    name:'公司规模',
+                    type:'pie',
+                    center: ['50%', '47%'],
+                    radius: ['40%', '63%'],
+                    color:['#2640f5', '#fe566c', '#65db99', '#d30afd', '#78f4f5', '#fcba61', '#f5d978', '#c8f578'],
+                    data: data['companysize_text']['data'],
+                    itemStyle:{
+                        normal:{
+                            label:{
+                                show:false,
+                                position:'inner',
+                                textstyle:{
+                                    fontWeight:50,
+                                    fontSize:1
+                                }
+                            },
+                            labelLine:{
+                                show:false,
+                            }
+
+                        }
+                    },
+
+                }
+            ]
+        };
+        myChart.setOption(option);
+        window.addEventListener("resize", function () {
+            myChart.resize();
+        });
+    }
+
+    function fb2() {
+        var myChart = echarts.init(document.getElementById('fb2'));
+        var data = {{ list|safe }}
+        option = {
+            title: [{
+                text: '学历要求',
+                top: '5%',
+                left: 'center',
+                textStyle: {
+                    //color: '#balck',
+                    fontSize: '16'
+                }
+
+            }],
+            tooltip: {
+                trigger: 'item',
+                formatter: "{a} <br/>{b}: {c} ({d}%)",
+                position: function (p) {   //其中p为当前鼠标的位置
+                    return [p[0] + 10, p[1] - 10];
+                }
+            },
+            //图片保存
+            toolbox: {
+                feature: {
+                    saveAsImage: {}
+                }
+            },
+            legend: {
+                top: '85%',
+                itemWidth: 20,
+                itemHeight: 20,
+                // data:['2D线','3D线','资源类','采集类','宝宝大全','2D视频','3D视频'],
+                data: data['degreefrom']['x_name'],
+                textStyle: {
+                    fontSize: '15'
+                }
+            },
+            series: [
+                {
+                    name: '公司规模',
+                    type: 'pie',
+                    center: ['50%', '47%'],
+                    radius: ['40%', '63%'],
+                    color: ['#2640f5', '#fe566c', '#65db99', '#d30afd', '#78f4f5', '#fcba61', '#f5d978', '#c8f578'],
+                    data: data['degreefrom']['data'],
+                    itemStyle: {
+                        normal: {
+                            label: {
+                                show: false,
+                                position: 'inner',
+                                textstyle: {
+                                    fontWeight: 50,
+                                    fontSize: 1
+                                }
+                            },
+                            labelLine: {
+                                show: false,
+                            }
+
+                        }
+                    },
+
+                }
+            ]
+        };
+        myChart.setOption(option);
+        window.addEventListener("resize", function () {
+            myChart.resize();
+        });
+    }
+
+    function fb3() {
+        var myChart = echarts.init(document.getElementById('fb3'));
+        var data = {{ list|safe }}
+        option = {
+            title: [{
+                text: '公司类型',
+                top: '5%',
+                left: 'center',
+                textStyle: {
+                    //color: '#balck',
+                    fontSize: '16'
+                }
+
+            }],
+            tooltip: {
+                trigger: 'item',
+                formatter: "{a} <br/>{b}: {c} ({d}%)",
+                position: function (p) {   //其中p为当前鼠标的位置
+                    return [p[0] + 10, p[1] - 10];
+                }
+            },
+            //图片保存
+            toolbox: {
+                feature: {
+                    saveAsImage: {}
+                }
+            },
+            legend: {
+                top: '85%',
+                itemWidth: 15,
+                itemHeight: 15,
+                // data:['2D线','3D线','资源类','采集类','宝宝大全','2D视频','3D视频'],
+                data: data['companytype_text']['x_name'],
+                textStyle: {
+                    fontSize: '15'
+                }
+            },
+            series: [
+                {
+                    name: '公司类型',
+                    type: 'pie',
+                    center: ['50%', '47%'],
+                    radius: ['40%', '63%'],
+                    color: ['#2640f5', '#fe566c', '#65db99', '#d30afd', '#78f4f5', '#fcba61', '#f5d978', '#c8f578'],
+                    data: data['companytype_text']['data'],
+                    itemStyle: {
+                        normal: {
+                            label: {
+                                show: false,
+                                position: 'inner',
+                                textstyle: {
+                                    fontWeight: 50,
+                                    fontSize: 1
+                                }
+                            },
+                            labelLine: {
+                                show: false,
+                            }
+
+                        }
+                    },
+
+                }
+            ]
+        };
+        myChart.setOption(option);
+        window.addEventListener("resize", function () {
+            myChart.resize();
+        });
+    }
+
+    function fb4() {
+        var myChart = echarts.init(document.getElementById('fb4'));
+        var data = {{ list|safe }}
+        option = {
+            title: [{
+                text: '工作年限',
+                top: '5%',
+                left: 'center',
+                textStyle: {
+                    //color: '#balck',
+                    fontSize: '16'
+                }
+
+            }],
+            tooltip: {
+                trigger: 'item',
+                formatter: "{a} <br/>{b}: {c} ({d}%)",
+                position: function (p) {   //其中p为当前鼠标的位置
+                    return [p[0] + 10, p[1] - 10];
+                }
+            },
+            //图片保存
+            toolbox: {
+                feature: {
+                    saveAsImage: {}
+                }
+            },
+            legend: {
+                top: '85%',
+                itemWidth: 20,
+                itemHeight: 20,
+                // data:['2D线','3D线','资源类','采集类','宝宝大全','2D视频','3D视频'],
+                data: data['workyear']['x_name'],
+                textStyle: {
+                    fontSize: '15'
+                }
+            },
+            series: [
+                {
+                    name: '工作年限',
+                    type: 'pie',
+                    center: ['50%', '47%'],
+                    radius: ['40%', '63%'],
+                    color: ['#2640f5', '#fe566c', '#65db99', '#d30afd', '#78f4f5', '#fcba61', '#f5d978', '#c8f578'],
+                    data: data['workyear']['data'],
+                    itemStyle: {
+                        normal: {
+                            label: {
+                                show: false,
+                                position: 'inner',
+                                textstyle: {
+                                    fontWeight: 50,
+                                    fontSize: 1
+                                }
+                            },
+                            labelLine: {
+                                show: false,
+                            }
+
+                        }
+                    },
+
+                }
+            ]
+        };
+        myChart.setOption(option);
+        window.addEventListener("resize", function () {
+            myChart.resize();
+        });
+    }
+
+    function fb5() {
+        var myChart = echarts.init(document.getElementById('fb5'));
+        var data = {{ list|safe }}
+        option = {
+            // backgroundColor: "#0f375f",
+            tooltip: {
+                trigger: "axis",
+                axisPointer: {
+                    type: 'cross',
+                    label: {
+                        backgroundColor: '#6a7985'
+                    }
+                }
+            },
+            grid: {
+                left: '8%',
+                right: '5%',
+                bottom: '0',
+                top:'16%',
+                containLabel: true
+            },
+            //图片保存
+            toolbox: {
+                feature: {
+                    saveAsImage: {}
+                }
+            },
+            legend: {
+
+                top: "2%",
+                left: 'center',
+                textStyle: {
+                    color: "#000",
+                    fontSize: "12"
+                },
+
+            },
+
+            xAxis: {
+                color: "#000",
+                name: "行业",
+                type: 'category',
+
+                data: data['companyind_text']['x_name'],
+                nameTextStyle: {
+                    color: "#000",
+                    fontSize: 14
+                },
+                axisLine: {
+                    show: true, //隐藏X轴轴线
+                    lineStyle: {
+                        color: '#fff',
+                        width: 2
+                    }
+                },
+                axisTick: {
+                    show: true //隐藏X轴刻度
+                },
+                axisLabel: {
+                    show: true,
+                    textStyle: {
+                        color: "#000", //X轴文字颜色
+                        fontSize: 16
+                    }
+                },
+
+            },
+            yAxis: [{
+                    color: "#000",
+                    type: "value",
+                    name: "岗位数量",
+
+                    nameTextStyle: {
+                        color: "#000",
+                        fontSize: 16
+                    },
+                    splitLine: {
+                        show: false
+                    },
+                    axisTick: {
+                        show: true
+                    },
+                    axisLine: {
+                        show: true,
+                        lineStyle: {
+                            color: '#fff',
+                            width: 2
+                        }
+                    },
+                    axisLabel: {
+                        show: true,
+                        textStyle: {
+                            color: "#000",
+                            fontSize: 16
+                        }
+                    },
+
+                },
+                {
+                show:false
+
+                }
+            ],
+            series: [{
+                    name: "行业分布",
+                    type: "line",
+                    yAxisIndex: 1, //使用的 y 轴的 index，在单个图表实例中存在多个 y轴的时候有用
+                    smooth: true, //平滑曲线显示
+                    showAllSymbol: true, //显示所有图形。
+                    symbol: "circle", //标记的图形为实心圆
+                    symbolSize: 8, //标记的大小
+                    itemStyle: {
+                        //折线拐点标志的样式
+                        color: "#eb2bd1",
+                        borderColor: "#3D7EEB",
+                        width: 2,
+                        shadowColor: "#3D7EEB",
+                        shadowBlur: 4
+                    },
+                    lineStyle: {
+                        color: "#c1ff38",
+                        width: 2,
+                        shadowColor: "#3D7EEB",
+                        shadowBlur: 4
+                    },
+                    areaStyle: {
+                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                                offset: 0,
+                                color: "rgba(61,126,235, 0.5)"
+                            },
+                            {
+                                offset: 1,
+                                color: "rgba(61,126,235, 0)"
+                            }
+                        ])
+                    },
+                    // data: [200, 300, 300, 900, 1500, 1200, 600]
+                    data: data['companyind_text']['data'],
+
+            },
+
+
+            ]
+        };
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+        window.addEventListener("resize", function () {
+            myChart.resize();
+        });
+
+    }
+
+    function fb6() {
+        var myChart = echarts.init(document.getElementById('fb6'));
+        var data = {{ list|safe }}
+        option = {
+            // backgroundColor:"#0f375f",
+            grid: {
+                left: '8%',
+                right: '5%',
+                top: '5%',
+                containLabel: false
+            },
+            legend: {
+                top: "2%",
+                right: 'center',
+                textStyle: {
+                    color: '#2640f5',
+                    fontSize: "12"
+                },
+            },
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'cross',
+                }
+            },
+            //图片保存
+            toolbox: {
+                feature: {
+                    saveAsImage: {}
+                }
+            },
+            xAxis: {
+                type: 'category',
+                // boundaryGap: false,
+                data: data['providesalary_text']['x_name'],
+                triggerEvent: true,
+                splitLine: {
+                    show: false
+                },
+                axisLine: {
+                    show: true,
+                    lineStyle: {
+                        width: 2,
+                        color: '#fff',
+                    }
+                },
+                axisTick: {
+                    show: false
+                },
+                axisLabel: {
+                    //     textStyle: {
+                    //     color: "rgba(250,250,250,0.6)", //X轴文字颜色
+                    //     fontSize: 16
+                    // },
+                    color: '#000',
+                    fontSize: 16,
+                    fontWeight: 'bold',
+                    textShadowOffsetY: 2
+                }
+            },
+            yAxis: {
+                nameTextStyle: {
+                    color: '#fff',
+                    fontSize: 16,
+                    textShadowColor: '#000',
+                    textShadowOffsetY: 2
+                },
+                type: 'value',
+                splitLine: {
+                    show: true,
+                    lineStyle: {
+                        color: 'rgba(255,255,255,.2)'
+                    }
+                },
+                axisLine: {
+                    show: true,
+                    lineStyle: {
+                        width: 2,
+                        color: 'rgba(255,255,255,.6)'
+                    }
+                },
+                axisTick: {
+                    show: true
+                },
+                axisLabel: {
+                    textStyle: {
+                        color: "#000", //X轴文字颜色
+                        fontSize: 16
+                    },
+                    color: '#000',
+                    fontSize: 16,
+                    textShadowColor: '#fff',
+                    textShadowOffsetY: 2
+                }
+            },
+            dataZoom: [{
+                type: 'inside',
+                start: 0,
+                end: 10
+            }, {
+                start: 0,
+                end: 10,
+                handleIcon: 'M10.7,11.9v-1.3H9.3v1.3c-4.9,0.3-8.8,4.4-8.8,9.4c0,5,3.9,9.1,8.8,9.4v1.3h1.3v-1.3c4.9-0.3,8.8-4.4,8.8-9.4C19.5,16.3,15.6,12.2,10.7,11.9z M13.3,24.4H6.7V23h6.6V24.4z M13.3,19.6H6.7v-1.4h6.6V19.6z',
+                handleSize: '80%',
+                height: 16,
+                handleStyle: {
+                    color: '#fff',
+                    shadowBlur: 3,
+                    shadowColor: 'rgba(0, 0, 0, 0.6)',
+                    shadowOffsetX: 2,
+                    shadowOffsetY: 2
+                }
+            }],
+            series: [
+                {
+                    name: 'top',
+                    type: 'line',
+                    data: data['providesalary_text']['top'],
+                    symbol: 'none',
+                    symbolSize: 12,
+                    smooth: true,
+
+                    label: {
+                        show: false,
+                        position: 'top',
+                        textStyle: {
+                            fontSize: 18,
+                            fontWeight: 'bold'
+                        }
+                    },
+                },
+
+                {
+                    name: 'bottom',
+                    type: 'line',
+                    data: data['providesalary_text']['bottom'],
+                    symbol: 'none',
+                    symbolSize: 12,
+                    color: '#888888',
+                    label: {
+                        show: false,
+                        position: 'top',
+                        textStyle: {
+                            fontSize: 18,
+                            fontWeight: 'bold'
+                        }
+                    },
+                },
+                {
+                    name: 'avg',
+                    type: 'line',
+                    data: data['providesalary_text']['avg'],
+                    symbol: 'none',
+                    symbolSize: 12,
+                    color: '#3D7EEB',
+                    label: {
+                        show: false,
+                        position: 'top',
+                        textStyle: {
+                            fontSize: 18,
+                            fontWeight: 'bold'
+                        }
+                    },
+                }
+            ]
+        };
+
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+        window.addEventListener("resize", function () {
+            myChart.resize();
+        });
+    }
+    fb1();
+    fb2();
+    fb3();
+    fb4();
+    fb5();
+    fb6();
+    </script>
+
+{% endblock %}

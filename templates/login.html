@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+<head>
+    <meta charset="UTF-8">
+    <title>login</title>
+    <link rel="stylesheet" href="/static/js/index.css">
+
+</head>
+
+<body>
+
+<body>
+<canvas class="cavs" width="1575" height="1337"></canvas>
+
+<div class="loginmain">
+    <div class="login-title">
+        <span>登录</span>
+    </div>
+    <form method="POST" action="/login/">
+        <div class="login-con">
+            <div class="login-user">
+                <div class="icon">
+                    <img src="http://v.bootstrapmb.com/2020/9/acyh58728/image/cd-icon-username.png" alt="">
+                </div>
+                <input type="text" name="user" placeholder="用户名" autocomplete="off" value="">
+            </div>
+            <div class="login-pwd">
+                <div class="icon">
+                    <img src="http://v.bootstrapmb.com/2020/9/acyh58728/image/cd-icon-password.png" alt="">
+                </div>
+                <input type="password" name="pwd" placeholder="密码" autocomplete="off" value="">
+            </div>
+            <!--
+            <div class="login-yan">
+                <div class="icon">
+                    <img src="/static/img/yan.png" alt="">
+                </div>
+                <input type="text" name="pwd" placeholder="验证码" autocomplete="off" value="">
+            </div>
+            -->
+            <div class="login-btn">
+                <input type="submit" value="登录">
+            </div>
+        </div>
+    </form>
+</div>
+</body>
+
+
+<script src="/static/layui/layui.js"></script>
+<script src="/static/layui/layui.all.js"></script>
+<script src="/static/echarts/echarts.min.js"></script>
+<script src="/static/js/ban.js"></script>
+</html>

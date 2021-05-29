@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <!-- 标题代码块 -->
+    <title>
+
+        {% block title %}
+		{% endblock %}
+    </title>
+
+        <!-- css代码块 -->
+        {% block link %}
+		{% endblock %}
+
+</head>
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+  <div class="layui-header">
+    <div class="layui-logo"><i class="layui-icon layui-icon-website"></i>  招聘数据可视化系统</div>
+
+    <ul class="layui-nav layui-layout-left">
+    <li class="layui-nav-item">
+        {% block d_title %}
+		{% endblock %}
+    </li>
+    </ul>
+
+    <!--
+    <ul class="layui-nav layui-layout-right">
+      <li class="layui-nav-item">
+        <a href="javascript:;">
+            <img src="/static/layui/images/111.jpg" class="layui-nav-img">
+          用户名
+        </a>
+        <dl class="layui-nav-child">
+          <dd><a href="">基本资料</a></dd>
+          <dd><a href="">安全设置</a></dd>
+        </dl>
+      </li>
+      <li class="layui-nav-item"><a href="">退出</a></li>
+    </ul>
+    -->
+
+  </div>
+
+  <div class="layui-side layui-bg-black">
+    <div class="layui-side-scroll">
+      <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+      <ul class="layui-nav layui-nav-tree"  lay-filter="test">
+        {% csrf_token %}
+      <!--
+        <div title="菜单缩放" class="kit-side-fold"><i class="layui-icon layui-icon-face-smile"></i></div>
+        -->
+        <li class="layui-nav-item"><a href="/index/">首页</a></li>
+        <li class="layui-nav-item">
+          <a href="javascript:;">职位详情</a>
+          <dl class="layui-nav-child">
+              {% for i in  list.keyword %}
+                  <dd><a onclick="job_name('{{  i.0  }}');" >{{ i.0 }} </a></dd>
+              {% endfor %}
+          </dl>
+        </li>
+        <li class="layui-nav-item">
+          <a href="javascript:;">对比</a>
+          <dl class="layui-nav-child">
+            <dd><a href="/contrast/?key=job">职位</a></dd>
+            <dd><a href="/contrast/?key=city">城市</a></dd>
+          </dl>
+        </li>
+        <li class="layui-nav-item"><a href="/setdata/">自定义设置</a></li>
+        <li class="layui-nav-item"><a href="/map/">地图</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="layui-body">
+    <!--<div style="padding: 15px;">-->
+    <div style="padding: 10px;">
+        <!-- 内容代码块 -->
+        {% block body %}
+		{% endblock %}
+
+    </div>
+  </div>
+    <!-- 底部固定区域  -->
+  <div class="layui-footer">
+    底部固定区域
+  </div>
+
+</div>
+    <!-- js代码块 -->
+    {% block script %}
+    {% endblock %}
+    <script>
+    layui.use('element', function(){
+      var element = layui.element; //导航的hover效果、二级菜单等功能，需要依赖element模块
+
+      //监听导航点击
+      element.on('nav(demo)', function(elem){
+        //console.log(elem)
+        layer.msg(elem.text());
+      });
+    });
+    </script>
+<script>
+  //JavaScript代码区域
+  layui.use('element', function(){
+    var element = layui.element;
+
+  });
+  var isShow = true; //定义一个标志位
+  $('.kit-side-fold').click(function(){
+    //选择出所有的span，并判断是不是hidden
+    $('.layui-nav-item span').each(function(){
+      if($(this).is(':hidden')){
+        $(this).show();
+      }else{
+        $(this).hide();
+      }
+    });
+    //判断isshow的状态
+    if(isShow){
+      $('.layui-side.layui-bg-black').width(60); //设置宽度
+      $('.kit-side-fold i').css('margin-right', '70%'); //修改图标的位置
+      //将footer和body的宽度修改
+      $('.layui-body').css('left', 60+'px');
+      $('.layui-footer').css('left', 60+'px');
+      //将二级导航栏隐藏
+      $('dd span').each(function(){
+        $(this).hide();
+      });
+      //修改标志位
+      isShow =false;
+    }else{
+      $('.layui-side.layui-bg-black').width(200);
+      $('.kit-side-fold i').css('margin-right', '10%');
+      $('.layui-body').css('left', 200+'px');
+      $('.layui-footer').css('left', 200+'px');
+      $('dd span').each(function(){
+        $(this).show();
+      });
+      isShow =true;
+    }
+  });
+
+</script>
+    <script src="/static/echarts/jquery.js"></script>
+    <script>
+        function job_name(key){
+            $.ajax({
+                type:"POST",  //提交方式
+                dataType:"json", //数据类型
+                url:"/job/", //请求url
+                data: {
+                    'blog_id':key,
+                    'url_h':window.location.pathname
+                },
+                async:false,
+                success:function(arg){
+                    console.log(arg['msg']);
+                    if (arg['msg'] == "no") {//根据返回值进行跳转
+                        window.location.href = '/index/';
+                    }
+                    else {
+                        console.log('success');
+                        fb1(arg);
+                        fb2(arg);
+                        fb3(arg);
+                        fb4(arg);
+                        fb5(arg);
+                        fb6(arg);
+                        map(arg['city']['x_name_city']);
+                        layui.use('table', function(){
+                            var table = layui.table;
+                            var data1 = arg
+                            table.render({
+                                elem: '#data_list',
+                                cellMinWidth: 80,
+                                cols: [[
+                                    {field: 'job_href', width: 80, title: '链接', sort: true}
+                                    , {field: 'company_name', title: '公司名称', sort: true}
+                                    , {field: 'job_name', title: '职位名称', sort: true}
+                                    , {field: 'companytype_text', title: '公司类型', sort: true}
+                                    , {field: 'jobwelf_list', title: '福利标签', sort: true}
+                                    , {field: 'degreefrom', title: '学历要求', sort: true}
+
+                                    , {field: 'workyear', title: '工作年限', sort: true}
+                                    , {field: 'companyind_text', title: '行业', sort: true}
+                                    , {field: 'providesalary_text', title: '薪资待遇', sort: true}]],
+                                data: data1['data1']
+                                , page: true
+                                , id: 'testReload'
+                            });
+
+                            var $ = layui.$, active = {
+                                reload: function () {
+                                    var demoReload = $('#demoReload');
+
+                                    //执行重载
+                                    table.reload('testReload', {
+                                        page: {
+                                            curr: 1 //重新从第 1 页开始
+                                        }
+                                        , where: {
+                                            key: {
+                                                id: demoReload.val()
+                                            }
+                                        }
+                                    }, 'data');
+                                }
+                            };
+
+                            $('.demoTable .layui-btn').on('click', function () {
+                                var type = $(this).data('type');
+                                active[type] ? active[type].call(this) : '';
+                            });
+                        });
+                    }
+
+
+                },
+                error: function(e) {
+                    console.log("error")
+                    console.log(e)
+                },
+            });
+            return false;
+
+        };
+    </script>
+
+
+
+</body>
+</html>
